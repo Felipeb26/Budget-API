@@ -7,6 +7,7 @@ import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.util.List;
 import java.util.UUID;
 
 @ApplicationScoped
@@ -17,6 +18,11 @@ public class UserServiceImpl implements UserService {
     @Inject
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    @Override
+    public Uni<List<UserEntity>> findAll(String id, String name, String email) {
+        return userRepository.findAll().list();
     }
 
     @Override

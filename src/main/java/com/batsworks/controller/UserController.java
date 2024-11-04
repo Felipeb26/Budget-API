@@ -8,6 +8,8 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import org.jboss.logging.annotations.Param;
 
+import java.util.List;
+
 @Path("/v1/users")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -18,6 +20,15 @@ public class UserController {
     @Inject
     public UserController(UserService userService) {
         this.service = userService;
+    }
+
+    @GET
+    public Uni<List<UserEntity>> findAll(@QueryParam("id") String id,
+                                         @QueryParam("email") String email,
+                                         @QueryParam("name") String name,
+                                         @QueryParam("page") @DefaultValue("0") int page,
+                                         @QueryParam("size") @DefaultValue("10") int size) {
+        return service.findAll(id, name, email);
     }
 
     @GET

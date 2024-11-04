@@ -14,8 +14,21 @@
 # docker run -i --rm -p 8080:8080 quarkus/budget
 #
 ###
+FROM quay.io/quarkus/ubi-quarkus-mandrel-builder-image:23.1-java21 AS build
+WORKDIR /app
+COPY . .
+
+RUN ./mvnw -v
+# Compila o aplicativo no perfil "native" com o Maven, omitindo testes
+RUN ./mvnw package -Pnative -DskipTests
+RUN echo " finalizando \n"
+
 FROM registry.access.redhat.com/ubi8/ubi-minimal:8.10
 WORKDIR /work/
+
+COPY --from=build /app/target/*-runner /work/application
+RUN chmod 775 /work/application
+
 RUN chown 1001 /work \
     && chmod "g+rwX" /work \
     && chown 1001:root /work
