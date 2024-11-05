@@ -10,7 +10,7 @@ public class DefaultExceptionHandler implements Serializable {
     private final String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
 
     public DefaultExceptionHandler(String message, String path) {
-        this.message = message;
+        this.message = limitMessageError(message);
         this.path = path;
     }
 
@@ -24,5 +24,10 @@ public class DefaultExceptionHandler implements Serializable {
 
     public String getTime() {
         return time;
+    }
+
+    private String limitMessageError(String messageError){
+        messageError = messageError.split("\n")[0];
+        return messageError;
     }
 }

@@ -1,5 +1,6 @@
 package com.batsworks.domain.service;
 
+import com.batsworks.domain.dto.PageDTO;
 import com.batsworks.domain.entity.UserEntity;
 import io.smallrye.mutiny.Uni;
 
@@ -11,5 +12,5 @@ public interface UserService {
 
     Uni<UserEntity> save(UserEntity userEntity);
 
-    Uni<List<UserEntity>> findAll(String id, String name, String email);
+    Uni<List<UserEntity>> findAll(String id, String name, String email, int page, int size);
 }

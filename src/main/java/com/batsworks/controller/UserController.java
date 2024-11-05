@@ -1,5 +1,6 @@
 package com.batsworks.controller;
 
+import com.batsworks.domain.dto.PageDTO;
 import com.batsworks.domain.entity.UserEntity;
 import com.batsworks.domain.service.UserService;
 import io.smallrye.mutiny.Uni;
@@ -28,7 +29,7 @@ public class UserController {
                                          @QueryParam("name") String name,
                                          @QueryParam("page") @DefaultValue("0") int page,
                                          @QueryParam("size") @DefaultValue("10") int size) {
-        return service.findAll(id, name, email);
+        return service.findAll(id, name, email, page, size);
     }
 
     @GET
