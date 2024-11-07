@@ -1,24 +1,30 @@
 package com.batsworks.domain.service.impl;
 
-import com.batsworks.config.enums.ErrorCodeMessage;
-import com.batsworks.config.exceptions.UsuarioException;
+import com.batsworks.config.exceptions.BussinesApplicationException;
+import com.batsworks.config.exceptions.BussinesApplicationExceptionHandler;
+import com.batsworks.config.exceptions.UserException;
+import com.batsworks.domain.dto.PageDTO;
 import com.batsworks.domain.entity.UserEntity;
 import com.batsworks.domain.repositoty.UserRepository;
 import com.batsworks.domain.service.UserService;
+import com.batsworks.utils.PageDTOUtility;
+import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
 import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.jboss.resteasy.reactive.RestResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.List;
 import java.util.UUID;
 
-import static org.jboss.resteasy.reactive.RestResponse.Status.BAD_REQUEST;
+import static com.batsworks.config.enums.ErrorCodeMessage.UNKNOW_ERROR;
 
-@WithTransaction
 @ApplicationScoped
 public class UserServiceImpl implements UserService {
 
+    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
     private final UserRepository userRepository;
 
     @Inject
@@ -28,19 +34,52 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @WithTransaction
-    public Uni<List<UserEntity>> findAll(String id, String name, String email, int page, int size) {
-        if (page == 0)
-            throw new UsuarioException(BAD_REQUEST, ErrorCodeMessage.GROUP_LIMIT_MESSAGE);
-        return userRepository.findAll().list();
+    public Uni<PageDTO<UserEntity>> findAll(String id, String name, String email, int page, int size) {
+        var pages = PageDTOUtility.create(userRepository.findAll(), page, size);
+//        return userRepository.findAll().list();
+        return pages;
     }
 
     @Override
-    public Uni<UserEntity> findById(String id) {
-        return userRepository.findById(UUID.fromString(id));
+    public Uni<UserEntity> findById(UUID id) {
+        return userRepository.findById(id);
     }
 
+    @WithTransaction
     @Override
     public Uni<UserEntity> save(UserEntity userEntity) {
         return userRepository.persist(userEntity);
+    }
+
+    @WithTransaction
+    @Override
+    public Uni<Void> updateUser(UUID id, UserEntity userD) {
+        return userRepository.findById(id).onItem().ifNotNull().transform(user -> {
+                    userD.setId(id);
+                    return userD;
+                }).onItem().ifNotNull().transform(PanacheEntityBase::persistAndFlush)
+                .onItem().ifNull().failWith(() -> new UserException(RestResponse.Status.NOT_FOUND, UNKNOW_ERROR))
+                .replaceWithVoid()
+                .onFailure().transform(failure -> {
+                    if(failure instanceof BussinesApplicationException bussinesException)
+                        throw new UserException(bussinesException.getResponse().getStatus(), UNKNOW_ERROR, failure.getMessage());
+                    throw new UserException(RestResponse.Status.BAD_REQUEST, UNKNOW_ERROR, failure.getMessage());
+                });
+    }
+
+    @WithTransaction
+    @Override
+    public Uni<Void> deleteById(UUID id) {
+        var wasDeleted = userRepository.deleteById(id);
+
+        return wasDeleted.onItem().ifNotNull().transform(isTrue -> {
+                    if (Boolean.FALSE.equals(isTrue)) throw new UserException(RestResponse.Status.BAD_REQUEST, UNKNOW_ERROR);
+                    return isTrue;
+                }).onItem().ifNull().failWith(() -> new UserException(RestResponse.Status.NOT_FOUND, UNKNOW_ERROR, "erro ao tentar deletar"))
+                .replaceWithVoid()
+                .onFailure().transform(error -> {
+                    log.error("ERRO {}", error.getMessage());
+                    throw new UserException(RestResponse.Status.BAD_REQUEST, UNKNOW_ERROR, error.getMessage());
+                });
     }
 }

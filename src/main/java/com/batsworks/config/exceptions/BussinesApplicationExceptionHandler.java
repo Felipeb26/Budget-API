@@ -1,10 +1,7 @@
 package com.batsworks.config.exceptions;
 
-import jakarta.inject.Inject;
-import jakarta.ws.rs.core.Context;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.UriInfo;
+import com.batsworks.config.messages.RetriveMessage;
+import jakarta.ws.rs.core.*;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 import org.slf4j.Logger;
@@ -17,18 +14,17 @@ public class BussinesApplicationExceptionHandler implements ExceptionMapper<Buss
 
     @Context
     private UriInfo uriInfo;
-
-    @Inject
-    ErrorMessages errorMessages;
+    @Context
+    private Request request;
 
     @Override
     public Response toResponse(BussinesApplicationException e) {
         log.error("|=| A error happen: ==> {}", e.getMessage());
         String url = uriInfo.getAbsolutePath().toString();
-        var message = errorMessages.get(e.getErrorCodeMessage());
-        DefaultExceptionHandler entity = new DefaultExceptionHandler(message, url);
+        var message = RetriveMessage.get(e.getErrorCodeMessage(), e.getArgs());
+        DefaultExceptionHandler entity = new DefaultExceptionHandler(message, url, request.getMethod());
 
-        return Response.status(Response.Status.BAD_REQUEST)
+        return Response.status(e.getResponse().getStatus())
                 .entity(entity).type(MediaType.APPLICATION_JSON).build();
     }
 

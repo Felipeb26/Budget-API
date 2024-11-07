@@ -24,15 +24,19 @@ public abstract class AbstractEntity<T> extends PanacheEntityBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    protected UUID id;
     @Column(updatable = false)
-    private LocalDateTime createdDate;
-    private LocalDateTime updateDate;
+    protected LocalDateTime createdDate;
+    protected LocalDateTime updateDate;
     @Column(name = "class_name", updatable = false)
     private String className;
 
     public UUID getId() {
         return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public LocalDateTime getCreatedDate() {

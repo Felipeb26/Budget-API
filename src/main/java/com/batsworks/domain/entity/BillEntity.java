@@ -1,9 +1,8 @@
 package com.batsworks.domain.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import com.batsworks.domain.enums.BillType;
+import com.batsworks.domain.enums.ExpenseType;
+import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -14,30 +13,34 @@ import java.util.UUID;
 @Table(name = "bills")
 public class BillEntity extends AbstractEntity<BillEntity> {
 
-    @ManyToOne
-    @JoinColumn(name = "user_entity_id")
-    private UserEntity userEntity;
-    private String name;
-    private BigDecimal value;
-    private LocalDate data;
-
-    public BillEntity(UUID id, LocalDateTime createdDate, LocalDateTime updateDate, String className, UserEntity userEntity, String name, BigDecimal value, LocalDate data) {
+    public BillEntity(UUID id, LocalDateTime createdDate, LocalDateTime updateDate, String className, UserEntity userEntity, ExpenseEntity expenseEntity, String name, BigDecimal value, LocalDate expiryDate, BillType type, Boolean regular) {
         super(id, createdDate, updateDate, className);
         this.userEntity = userEntity;
+        this.expenseEntity = expenseEntity;
         this.name = name;
         this.value = value;
-        this.data = data;
+        this.expiryDate = expiryDate;
+        this.type = type;
+        this.regular = regular;
     }
 
-    public BillEntity(UserEntity userEntity, String name, BigDecimal value, LocalDate data) {
-        this.userEntity = userEntity;
-        this.name = name;
-        this.value = value;
-        this.data = data;
-    }
+    public BillEntity(){}
 
-    public BillEntity() {
-    }
+    @ManyToOne
+    @JoinColumn(name = "userId")
+    private UserEntity userEntity;
+    @ManyToOne
+    @JoinColumn(name = "expenseId")
+    private ExpenseEntity expenseEntity;
+
+    private String name;
+    private BigDecimal value;
+    private LocalDate expiryDate;
+    @Enumerated(EnumType.STRING)
+    private BillType type;
+    private Boolean regular;
+    @Enumerated(EnumType.STRING)
+    private ExpenseType expenseType;
 
     public UserEntity getUserEntity() {
         return userEntity;
@@ -45,6 +48,14 @@ public class BillEntity extends AbstractEntity<BillEntity> {
 
     public void setUserEntity(UserEntity userEntity) {
         this.userEntity = userEntity;
+    }
+
+    public ExpenseEntity getExpenseEntity() {
+        return expenseEntity;
+    }
+
+    public void setExpenseEntity(ExpenseEntity expenseEntity) {
+        this.expenseEntity = expenseEntity;
     }
 
     public String getName() {
@@ -63,37 +74,27 @@ public class BillEntity extends AbstractEntity<BillEntity> {
         this.value = value;
     }
 
-    public LocalDate getData() {
-        return data;
+    public LocalDate getExpiryDate() {
+        return expiryDate;
     }
 
-    public void setData(LocalDate data) {
-        this.data = data;
+    public void setExpiryDate(LocalDate expiryDate) {
+        this.expiryDate = expiryDate;
     }
 
-    public static class Builder {
-        private UserEntity userEntity;
-        private String name;
-        private BigDecimal value;
-        private LocalDate data;
+    public BillType getType() {
+        return type;
+    }
 
-        public Builder setName(String name) {
-            this.name = name;
-            return this;
-        }
+    public void setType(BillType type) {
+        this.type = type;
+    }
 
-        public Builder setValue(BigDecimal value) {
-            this.value = value;
-            return this;
-        }
+    public Boolean getRegular() {
+        return regular;
+    }
 
-        public Builder setData(LocalDate data) {
-            this.data = data;
-            return this;
-        }
-
-        public BillEntity build() {
-            return new BillEntity(this.userEntity, this.name, this.value, this.data);
-        }
+    public void setRegular(Boolean regular) {
+        this.regular = regular;
     }
 }
