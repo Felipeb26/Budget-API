@@ -22,10 +22,10 @@ public class SharingEntity extends AbstractEntity<SharingEntity> {
     }
 
     @ManyToOne
-    @JoinColumn(name = "billId")
+    @JoinColumn(name = "bill_id")
     private BillEntity bill;
     @ManyToOne
-    @JoinColumn(name = "groupId")
+    @JoinColumn(name = "group_id")
     private GroupEntity group;
 
     public BillEntity getBill() {

@@ -3,12 +3,10 @@ package com.batsworks.domain.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@DynamicUpdate
 @Entity
 @Table(name = "groups")
 public class GroupEntity extends AbstractEntity<GroupEntity> {

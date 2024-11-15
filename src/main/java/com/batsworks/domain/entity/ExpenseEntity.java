@@ -1,9 +1,6 @@
 package com.batsworks.domain.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -28,14 +25,15 @@ public class ExpenseEntity extends AbstractEntity<ExpenseEntity> {
     }
 
     @ManyToOne
-    @JoinColumn(name = "billId")
+    @JoinColumn(name = "bill_id")
     private BillEntity bill;
     @ManyToOne
-    @JoinColumn(name = "principalBillId")
+    @JoinColumn(name = "principal_bill_id")
     private BillEntity principalBill;
 
     private String description;
     private BigDecimal value;
+    @Column(name = "expended_date")
     private LocalDate expendedDate;
 
 

@@ -4,11 +4,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDateTime;
 
-@DynamicUpdate
 @Entity
 @Table(name = "user_groups")
 public class UserGroup extends AbstractEntity<UserGroup> {
@@ -22,10 +20,10 @@ public class UserGroup extends AbstractEntity<UserGroup> {
     public UserGroup() {}
 
     @ManyToOne
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "user_id")
     private UserEntity user;
     @ManyToOne
-    @JoinColumn(name = "groupId")
+    @JoinColumn(name = "group_id")
     private GroupEntity group;
     private LocalDateTime joinedAt;
 

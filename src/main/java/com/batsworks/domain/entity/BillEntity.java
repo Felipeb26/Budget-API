@@ -27,19 +27,21 @@ public class BillEntity extends AbstractEntity<BillEntity> {
     public BillEntity(){}
 
     @ManyToOne
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "user_id")
     private UserEntity userEntity;
     @ManyToOne
-    @JoinColumn(name = "expenseId")
+    @JoinColumn(name = "expense_id")
     private ExpenseEntity expenseEntity;
 
     private String name;
     private BigDecimal value;
+    @Column(name = "expiry_date")
     private LocalDate expiryDate;
     @Enumerated(EnumType.STRING)
     private BillType type;
     private Boolean regular;
     @Enumerated(EnumType.STRING)
+    @Column(name = "expense_type")
     private ExpenseType expenseType;
 
     public UserEntity getUserEntity() {

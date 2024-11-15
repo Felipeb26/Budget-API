@@ -1,12 +1,13 @@
 package com.batsworks.domain.entity;
 
-import jakarta.persistence.*;
-import org.hibernate.annotations.DynamicUpdate;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@DynamicUpdate
 @Entity
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(columnNames = "email")

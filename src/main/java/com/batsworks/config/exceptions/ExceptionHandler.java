@@ -22,7 +22,7 @@ public class ExceptionHandler implements ExceptionMapper<Exception> {
         log.error("|=| A error happen: ==> {}", e.getMessage());
         String url = uriInfo.getAbsolutePath().toString();
 
-        DefaultExceptionHandler entity = new DefaultExceptionHandler(e.getMessage(), url, request.getMethod());
+        DefaultExceptionHandler entity = new DefaultExceptionHandler(e.getClass().getCanonicalName(), e.getMessage(), url, request.getMethod());
 
         return Response.status(Response.Status.BAD_REQUEST)
                 .entity(entity).type(MediaType.APPLICATION_JSON).build();

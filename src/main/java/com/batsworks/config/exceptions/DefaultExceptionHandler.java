@@ -9,8 +9,10 @@ public class DefaultExceptionHandler implements Serializable {
     private final String message;
     private final String path;
     private final String method;
+    private final String classError;
 
-    public DefaultExceptionHandler(String message, String path, String method) {
+    public DefaultExceptionHandler(String classError, String message, String path, String method) {
+        this.classError = classError;
         this.message = limitMessageError(message);
         this.path = path;
         this.method = method;
@@ -30,6 +32,10 @@ public class DefaultExceptionHandler implements Serializable {
 
     public String getTime() {
         return time;
+    }
+
+    public String getError() {
+        return classError;
     }
 
     private String limitMessageError(String messageError){

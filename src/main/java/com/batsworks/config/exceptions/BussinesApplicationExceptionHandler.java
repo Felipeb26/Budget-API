@@ -22,7 +22,7 @@ public class BussinesApplicationExceptionHandler implements ExceptionMapper<Buss
         log.error("|=| A error happen: ==> {}", e.getMessage());
         String url = uriInfo.getAbsolutePath().toString();
         var message = RetriveMessage.get(e.getErrorCodeMessage(), e.getArgs());
-        DefaultExceptionHandler entity = new DefaultExceptionHandler(message, url, request.getMethod());
+        DefaultExceptionHandler entity = new DefaultExceptionHandler(e.getClass().getCanonicalName(), message, url, request.getMethod());
 
         return Response.status(e.getResponse().getStatus())
                 .entity(entity).type(MediaType.APPLICATION_JSON).build();
